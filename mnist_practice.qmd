@@ -1,0 +1,107 @@
+---
+title: "Trying KNN"
+author: "Alexander Leak"
+html:
+  theme: darkly 
+---
+
+## Preparing Environment
+
+```{python} 
+import time
+import os
+
+import numpy as np
+import pandas as pd
+
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import precision_recall_curve, f1_score, roc_auc_score, roc_curve
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_predict, train_test_split, GridSearchCV
+from sklearn.datasets import fetch_openml
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
+from sklearn.metrics import ConfusionMatrixDisplay
+
+import matplotlib.pyplot as plt
+import plotnine as p9
+
+```
+
+```{python} 
+
+mnist = fetch_openml("mnist_784", as_frame=False)
+
+X,y = mnist.data, mnist.target
+
+X_train, X_test, y_train, y_test = train_test_split(X,y, train_size=0.8)
+
+```
+
+### Preprocessing
+
+```{python} 
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.fit_transform(X_test)
+
+```
+
+
+### Preparing a Neighbors Model
+
+```{python} 
+knn_clf = KNeighborsClassifier(n_neighbors=3)
+
+knn_clf.fit(X_train, y_train)
+
+base_y_test_pred = cross_val_predict(knn_clf, X_train, y_train)
+
+print("Accuracy:", accuracy_score(y_train, base_y_test_pred))
+classification_report(y_train, base_y_test_pred)
+
+print("F1 Score", f1_score(y_train, base_y_test_pred, average="macro"))
+```
+
+```{python} 
+ConfusionMatrixDisplay.from_predictions(y_train, base_y_test_pred)
+plt.show()
+```
+
+```{python} 
+ConfusionMatrixDisplay.from_predictions(y_train, base_y_test_pred, normalize="true",
+                                        values_format=".0%")
+plt.show()
+```
+
+### Hyperparameter Tuning on the KNN Model
+
+```{python} 
+parameters = {
+  "weights" : ["uniform", "distance"],
+  "n_neighbors":np.arange(1,10),
+}
+grid = GridSearchCV(KNeighborsClassifier(), param_grid=parameters,
+                    cv=10,
+                    scoring="accuracy",
+                    verbose=1,
+                    n_jobs=-3)
+```
+
+```{python} 
+start = time.perf_counter()
+grid.fit(X_train, y_train)
+end = time.perf_counter()
+```
+
+```{python} 
+elapsed = round((end-start)/60, 3)
+print("Elapsed Time:", elapsed, "minutes")
+print("Best Parameters", grid.best_params_)
+print("Best Index", grid.best_index_)
+print("Best Score", grid.best_score_)
+
+# os.system(f"spd-say 'Hyperparameter Tuning finished after {elapsed} minutes") Basically tells when its done
+```
+
+

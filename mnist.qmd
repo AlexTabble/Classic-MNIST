@@ -1,0 +1,300 @@
+---
+title: "MNIST Classification"
+html:
+  theme: darkly
+---
+
+We will use the dataset from [OpenMl](https://www.openml.org/) which is a 
+website with multiple ML datasets and API's at which you can use.
+
+```{python} 
+from sklearn.datasets import fetch_openml
+
+mnist = fetch_openml("mnist_784", as_frame=False)
+```
+
+We say `as_frame=False` here because the mnist dataset contains images which 
+isn't very dataframe compatible. We can instead work with images which are 
+represented by bitmaps.
+
+
+#### `sklearn.datasets`
+
+There are mainly three types of functions available from this submodule:
+1. `fetch_*` - loads real-world datasets
+2. `load_*` - returns toy datasets
+3. `make_*` - returns (X,y) tuple of data
+
+
+```{python} 
+X,y = mnist.data, mnist.target
+
+print(X.shape)
+
+print(y.shape)
+```
+
+#### How to view images
+
+```{python} 
+import matplotlib.pyplot as plt
+
+def plot_digit(image_data):
+  image = image_data.reshape(28,28)
+  plt.imshow(image, cmap="binary")
+  plt.axis("off")
+
+digit = X[0]
+plot_digit(digit)
+plt.show()
+```
+
+#### splitting into test and training sets
+
+The mnist data is already split into a train and test set which has been shuffled
+for us. This helps out since it **guarantees cross validation** will be similar
+
+```{python} 
+X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]
+```
+
+## Training a Binary Classifier
+
+Before we do crazy shit by predicting the exact digit, let's simplify by just
+predicting a single digit. 
+
+Our chosen digit will be 5.
+
+This is computationally less expensive and less effort than using a more complex
+model like a neural network. Our chosen model will be `Stochastic Gradient
+Descent`.
+
+```{python} 
+y_train_5 = (y_train == '5')
+y_test_5 = (y_test == '5')
+
+```
+
+```{python} 
+from sklearn.linear_model import SGDClassifier
+
+sgd_clf = SGDClassifier(random_state=42)
+sgd_clf.fit(X_train, y_train_5)
+```
+
+```{python} 
+sgd_clf.predict([digit])
+```
+
+## Measuring the Model Performance
+
+Evaluating a classifier is trickier than a regressor and there are a bunch of
+concepts to understand.
+
+### Measuring Accuracy using Cross-Validation
+
+```{python} 
+from sklearn.model_selection import cross_val_score
+
+cross_val_score(sgd_clf, X_train, y_train_5, cv=3, scoring="accuracy")
+```
+
+This looks good as we have above 95% accuracy for all folds but we shouldn't 
+get too excited by this just yet. First let's look at whether the `DummyClassifier`
+gives the same results.
+
+```{python} 
+from sklearn.dummy import DummyClassifier
+
+dummy_clf = DummyClassifier()
+dummy_clf.fit(X_train, y_train_5)
+print(any(dummy_clf.predict(X_train)))
+```
+
+No 5's are detected by our dummy classifier so let's check the 
+CV score:
+
+```{python} 
+cross_val_score(dummy_clf, X_train, y_train_5, cv=3, scoring="accuracy")
+```
+
+We now have 90% accuracy. This is simply becuase only 10% of the images are 5's
+so you have some imbalanced data which means you have a 90% chance of predicting 
+not 5 and being correct.
+
+A better way to evaluate such skewed data is with a `Confusion Matrix`.
+
+## Confusion Matrices
+
+The main purpose of Confusion Matrices is to check the False Positives and False
+Negatives of a classifier compared to True Positives and -Negatives. 
+
+```{python} 
+from sklearn.model_selection import cross_val_predict
+from sklearn.metrics import confusion_matrix
+
+y_train_pred = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3)
+cm = confusion_matrix(y_train_5, y_train_pred)
+
+print(cm)
+```
+
+This block here returns a predicted values list which still implements cross-
+validation which we use in our confusion matrix.
+
+::: {#tbl-confusion-matrix}
+|               | Predicted: Not 5 | Predicted: Is 5 |
+|---------------|------------------|-----------------|
+| **Actual: Not 5** | 53892            | 687             |
+| **Actual: Is 5**  | 1891             | 3530            |
+:::
+
+From the confusion matrix, we can derive **precision and recall** metrics.
+
+$$
+precision = \frac{TP}{TP+FP}
+$$
+
+alongside this, we calculate the **recall** rate which is also called the **sensitivity**
+and the **true positive rate**.
+
+$$
+recall = \frac{TP}{TP+FN}
+$$
+
+Scikit-Learn has metrics as well to predict precision and recall such as:
+```{python} 
+from sklearn.metrics import precision_score, recall_score
+
+precision_score(y_train_5, y_train_pred)
+recall_score(y_train_5, y_train_pred)
+```
+
+### Combining Precision and Recall 
+
+Its often more convenient to combine the metricxs into a single more intepretable
+metric like the **F1-score** which is the *harmonic mean* between the two 
+metrics:
+
+$$
+\begin{align}
+F_1 =& \frac{2}{\frac{1}{precision}+\frac{1}{recall}} \\
+=& 2 \times \frac{precision \times recall}{precision \times recall} \\
+=& \frac{TP}{TP+\frac{FN+TP}{2}}
+\end{align}
+$$
+
+```{python} 
+from sklearn.metrics import f1_score
+
+f1_score(y_train_5, y_train_pred)
+```
+
+>[!Tip] F1 isn't perfect
+> F1 score favors classifiers with similar precision and recall. Sometimes you 
+> care more about one metric than another.
+
+>[!Example] Predicting Child Safe Videos
+> You would **care more about high precision** since rejecting a few good vidoes
+> are fine as long as no bad ones slips out, i.e. low recall
+
+>[!Example] Predicting Shoplifters
+> You would rather have **high recall** such that no false negatives slips out.
+> This would cause false alarms but that's better than the alternative
+
+Both of these examples shows the importance of understanindg the data you're 
+working with.
+
+## The Precision/Recall Trade-off
+
+[Precision-Recall Trade-off](Trade-off.png)
+
+Each instance is determined as either positive or negative by the decision 
+function of the classifier. Increasing the threshold would increase recall 
+but lower percision and vice versa.
+
+Using scikit-learn's `predict()` function for a classifier directly doesn't let
+you set the threshold but we can use the `decision_function()` of a classifier
+and set the threshold manually like this:
+
+```{python} 
+y_scores = sgd_clf.decision_function([digit])
+
+threshold = 0
+
+y_digit_pred = (y_scores > threshold) # Gives same result as normal predict
+
+threshold = 3000
+
+y_digit_pred = (y_scores > threshold)
+```
+
+#### Using CV with Precision Functions
+
+We can use `cross_val_predict` but instead of the method being `predict`, we
+can use `decision_function`
+
+```{python} 
+
+from sklearn.metrics import precision_recall_curve
+
+y_scores = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3,
+                             method="decision_function")
+
+precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)
+
+plt.plot(thresholds, precisions[:-1], "b--", label="Precision",linewidth=2)
+plt.plot(thresholds, recalls[:-1], "g-", label="Recall",linewidth=2)
+plt.vlines(threshold, 0,1.0, "k", "dotted", label="threshold")
+plt.show()
+```
+
+```{python} 
+plt.plot(recalls, precisions, linewidth=2,label="Precision/Recall Curve")
+plt.show()
+```
+
+### Specifying a precision or recall
+
+Suppose we want to attain a 90% precision or recall, we could either search
+the graph for that point or use NumPy'a `argmax()` function which returns the
+index of that maximum value
+
+```{python} 
+idx_for_90_precision = (precision_score >= 0.90).argmax()
+threshold_for_90_precision = thresholds[idx_for_90_precision]
+
+print(threshold_for_90_precision)
+
+y_train_pred_90 = (y_scores >= threshold_for_90_precision)
+print(precision_score(y_train_5, y_train_pred_90))
+print(recall_score(y_train_5, y_train_pred_90))
+```
+
+## The ROC Curve
+
+The *receiver operating characteristic* curve is commonly used with classifiers.
+
+The graph plots the True Positive Rate(recall) against the False Positive Rate.
+The FPR(also called **fall-out**) is the ratio of incorrectly classified instances.
+
+Its also the same as $1-\text{True Negative Rate}$ which is called **specificity**.
+Hence, the ROC plots **sensitivity(recall) vs 1 - specificity**.
+
+```{python} 
+from sklearn.metrics import roc_curve
+
+fpr, tpr, thresholds = roc_curve(y_train_5, y_scores)
+
+plt.plot(fpr, tpr, linewidth=2, label="ROC Curve")
+plt.plot([0,1], [0,1], "k:", label="Random Classifier's ROC curve")
+plt.show()
+```
+
+Commonly, we would also use AUC to measure the classifier. 
+
+```{python} 
+from sklearn.metrics import roc_auc_score
+
+print(roc_auc_score(y_train_5, y_scores))
+```
