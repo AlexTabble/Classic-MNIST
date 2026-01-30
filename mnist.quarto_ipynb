@@ -1,0 +1,479 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"MNIST Classification Task\"\n",
+        "html:\n",
+        "  theme: darkly\n",
+        "---\n",
+        "\n",
+        "We will use the dataset from [OpenMl](https://www.openml.org/) which is a \n",
+        "website with multiple ML datasets and API's at which you can use."
+      ],
+      "id": "440f059f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from sklearn.datasets import fetch_openml\n",
+        "\n",
+        "mnist = fetch_openml(\"mnist_784\", as_frame=False)"
+      ],
+      "id": "603464c8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We say `as_frame=False` here because the mnist dataset contains images which \n",
+        "isn't very dataframe compatible. We can instead work with images which are \n",
+        "represented by bitmaps.\n",
+        "\n",
+        "\n",
+        "#### `sklearn.datasets`\n",
+        "\n",
+        "There are mainly three types of functions available from this submodule:\n",
+        "1. `fetch_*` - loads real-world datasets\n",
+        "2. `load_*` - returns toy datasets\n",
+        "3. `make_*` - returns (X,y) tuple of data\n"
+      ],
+      "id": "a10fbdc9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "X,y = mnist.data, mnist.target\n",
+        "\n",
+        "print(X.shape)\n",
+        "\n",
+        "print(y.shape)"
+      ],
+      "id": "8679a13a",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "#### How to view images"
+      ],
+      "id": "4bbb479d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "def plot_digit(image_data):\n",
+        "  image = image_data.reshape(28,28)\n",
+        "  plt.imshow(image, cmap=\"binary\")\n",
+        "  plt.axis(\"off\")\n",
+        "\n",
+        "digit = X[0]\n",
+        "plot_digit(digit)\n",
+        "plt.show()"
+      ],
+      "id": "84619586",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "#### splitting into test and training sets\n",
+        "\n",
+        "The mnist data is already split into a train and test set which has been shuffled\n",
+        "for us. This helps out since it **guarantees cross validation** will be similar"
+      ],
+      "id": "c8754932"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:]"
+      ],
+      "id": "87f1d3b1",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Training a Binary Classifier\n",
+        "\n",
+        "Before we do crazy shit by predicting the exact digit, let's simplify by just\n",
+        "predicting a single digit. \n",
+        "\n",
+        "Our chosen digit will be 5.\n",
+        "\n",
+        "This is computationally less expensive and less effort than using a more complex\n",
+        "model like a neural network. Our chosen model will be `Stochastic Gradient\n",
+        "Descent`."
+      ],
+      "id": "cd96622a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "y_train_5 = (y_train == '5')\n",
+        "y_test_5 = (y_test == '5')"
+      ],
+      "id": "8fc990a4",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from sklearn.linear_model import SGDClassifier\n",
+        "\n",
+        "sgd_clf = SGDClassifier(random_state=42)\n",
+        "sgd_clf.fit(X_train, y_train_5)"
+      ],
+      "id": "c61bc7cc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "sgd_clf.predict([digit])"
+      ],
+      "id": "73a6ca60",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Measuring the Model Performance\n",
+        "\n",
+        "Evaluating a classifier is trickier than a regressor and there are a bunch of\n",
+        "concepts to understand.\n",
+        "\n",
+        "### Measuring Accuracy using Cross-Validation"
+      ],
+      "id": "06d6603d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from sklearn.model_selection import cross_val_score\n",
+        "\n",
+        "cross_val_score(sgd_clf, X_train, y_train_5, cv=3, scoring=\"accuracy\")"
+      ],
+      "id": "60dae810",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This looks good as we have above 95% accuracy for all folds but we shouldn't \n",
+        "get too excited by this just yet. First let's look at whether the `DummyClassifier`\n",
+        "gives the same results."
+      ],
+      "id": "20fa9179"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from sklearn.dummy import DummyClassifier\n",
+        "\n",
+        "dummy_clf = DummyClassifier()\n",
+        "dummy_clf.fit(X_train, y_train_5)\n",
+        "print(any(dummy_clf.predict(X_train)))"
+      ],
+      "id": "27717bc2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "No 5's are detected by our dummy classifier so let's check the \n",
+        "CV score:"
+      ],
+      "id": "ff03b130"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "cross_val_score(dummy_clf, X_train, y_train_5, cv=3, scoring=\"accuracy\")"
+      ],
+      "id": "88e6bd8b",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "We now have 90% accuracy. This is simply becuase only 10% of the images are 5's\n",
+        "so you have some imbalanced data which means you have a 90% chance of predicting \n",
+        "not 5 and being correct.\n",
+        "\n",
+        "A better way to evaluate such skewed data is with a `Confusion Matrix`.\n",
+        "\n",
+        "## Confusion Matrices\n",
+        "\n",
+        "The main purpose of Confusion Matrices is to check the False Positives and False\n",
+        "Negatives of a classifier compared to True Positives and -Negatives. "
+      ],
+      "id": "c4c8967e"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from sklearn.model_selection import cross_val_predict\n",
+        "from sklearn.metrics import confusion_matrix\n",
+        "\n",
+        "y_train_pred = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3)\n",
+        "cm = confusion_matrix(y_train_5, y_train_pred)\n",
+        "\n",
+        "print(cm)"
+      ],
+      "id": "50bbd0cc",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "This block here returns a predicted values list which still implements cross-\n",
+        "validation which we use in our confusion matrix.\n",
+        "\n",
+        "::: {#tbl-confusion-matrix}\n",
+        "|               | Predicted: Not 5 | Predicted: Is 5 |\n",
+        "|---------------|------------------|-----------------|\n",
+        "| **Actual: Not 5** | 53892            | 687             |\n",
+        "| **Actual: Is 5**  | 1891             | 3530            |\n",
+        ":::\n",
+        "\n",
+        "From the confusion matrix, we can derive **precision and recall** metrics.\n",
+        "\n",
+        "$$\n",
+        "precision = \\frac{TP}{TP+FP}\n",
+        "$$\n",
+        "\n",
+        "alongside this, we calculate the **recall** rate which is also called the **sensitivity**\n",
+        "and the **true positive rate**.\n",
+        "\n",
+        "$$\n",
+        "recall = \\frac{TP}{TP+FN}\n",
+        "$$\n",
+        "\n",
+        "Scikit-Learn has metrics as well to predict precision and recall such as:"
+      ],
+      "id": "f3975ccc"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from sklearn.metrics import precision_score, recall_score\n",
+        "\n",
+        "precision_score(y_train_5, y_train_pred)\n",
+        "recall_score(y_train_5, y_train_pred)"
+      ],
+      "id": "2ae300ab",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Combining Precision and Recall \n",
+        "\n",
+        "Its often more convenient to combine the metricxs into a single more intepretable\n",
+        "metric like the **F1-score** which is the *harmonic mean* between the two \n",
+        "metrics:\n",
+        "\n",
+        "$$\n",
+        "\\begin{align}\n",
+        "F_1 =& \\frac{2}{\\frac{1}{precision}+\\frac{1}{recall}} \\\\\n",
+        "=& 2 \\times \\frac{precision \\times recall}{precision \\times recall} \\\\\n",
+        "=& \\frac{TP}{TP+\\frac{FN+TP}{2}}\n",
+        "\\end{align}\n",
+        "$$"
+      ],
+      "id": "e423ac9b"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from sklearn.metrics import f1_score\n",
+        "\n",
+        "f1_score(y_train_5, y_train_pred)"
+      ],
+      "id": "39ababb5",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        ">[!Tip] F1 isn't perfect\n",
+        "> F1 score favors classifiers with similar precision and recall. Sometimes you \n",
+        "> care more about one metric than another.\n",
+        "\n",
+        ">[!Example] Predicting Child Safe Videos\n",
+        "> You would **care more about high precision** since rejecting a few good vidoes\n",
+        "> are fine as long as no bad ones slips out, i.e. low recall\n",
+        "\n",
+        ">[!Example] Predicting Shoplifters\n",
+        "> You would rather have **high recall** such that no false negatives slips out.\n",
+        "> This would cause false alarms but that's better than the alternative\n",
+        "\n",
+        "Both of these examples shows the importance of understanindg the data you're \n",
+        "working with.\n",
+        "\n",
+        "## The Precision/Recall Trade-off\n",
+        "\n",
+        "[Precision-Recall Trade-off](Trade-off.png)\n",
+        "\n",
+        "Each instance is determined as either positive or negative by the decision \n",
+        "function of the classifier. Increasing the threshold would increase recall \n",
+        "but lower percision and vice versa.\n",
+        "\n",
+        "Using scikit-learn's `predict()` function for a classifier directly doesn't let\n",
+        "you set the threshold but we can use the `decision_function()` of a classifier\n",
+        "and set the threshold manually like this:"
+      ],
+      "id": "c008c56f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "y_scores = sgd_clf.decision_function([digit])\n",
+        "\n",
+        "threshold = 0\n",
+        "\n",
+        "y_digit_pred = (y_scores > threshold) # Gives same result as normal predict\n",
+        "\n",
+        "threshold = 3000\n",
+        "\n",
+        "y_digit_pred = (y_scores > threshold)"
+      ],
+      "id": "583a0216",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "#### Using CV with Precision Functions\n",
+        "\n",
+        "We can use `cross_val_predict` but instead of the method being `predict`, we\n",
+        "can use `decision_function`"
+      ],
+      "id": "0e75bda8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "from sklearn.metrics import precision_recall_curve\n",
+        "\n",
+        "y_scores = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3,\n",
+        "                             method=\"decision_function\")\n",
+        "\n",
+        "precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)\n",
+        "\n",
+        "plt.plot(thresholds, precisions[:-1], \"b--\", label=\"Precision\",linewidth=2)\n",
+        "plt.plot(thresholds, recalls[:-1], \"g-\", label=\"Recall\",linewidth=2)\n",
+        "plt.vlines(threshold, 0,1.0, \"k\", \"dotted\", label=\"threshold\")\n",
+        "plt.show()"
+      ],
+      "id": "00ad0465",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "plt.plot(recalls, precisions, linewidth=2,label=\"Precision/Recall Curve\")\n",
+        "plt.show()"
+      ],
+      "id": "39d5aa59",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Specifying a precision or recall\n",
+        "\n",
+        "Suppose we want to attain a 90% precision or recall, we could either search\n",
+        "the graph for that point or use NumPy'a `argmax()` function which returns the\n",
+        "index of that maximum value"
+      ],
+      "id": "96445c99"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "idx_for_90_precision = (precision_score >= 0.90).argmax()\n",
+        "threshold_for_90_precision = thresholds[idx_for_90_precision]\n",
+        "\n",
+        "print(threshold_for_90_precision)\n",
+        "\n",
+        "y_train_pred_90 = (y_scores >= threshold_for_90_precision)\n",
+        "print(precision_score(y_train_5, y_train_pred_90))\n",
+        "print(recall_score(y_train_5, y_train_pred_90))"
+      ],
+      "id": "60e0c836",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## The ROC Curve\n"
+      ],
+      "id": "219680ce"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/alex/.local/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
