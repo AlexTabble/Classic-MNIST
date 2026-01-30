@@ -6,15 +6,15 @@
       version="2.0">
 <channel>
 <title>MNIST</title>
-<link>https://your-website-url.example.com/</link>
-<atom:link href="https://your-website-url.example.com/index.xml" rel="self" type="application/rss+xml"/>
+<link>https://AlexTabble.github.io/Classic-MNIST/</link>
+<atom:link href="https://AlexTabble.github.io/Classic-MNIST/index.xml" rel="self" type="application/rss+xml"/>
 <description>A blog built with Quarto</description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Fri, 30 Jan 2026 18:11:55 GMT</lastBuildDate>
+<lastBuildDate>Fri, 30 Jan 2026 18:14:36 GMT</lastBuildDate>
 <item>
   <title>Mnist Data Augmentation</title>
   <dc:creator>Alexander Leak</dc:creator>
-  <link>https://your-website-url.example.com/posts/Augmentation/</link>
+  <link>https://AlexTabble.github.io/Classic-MNIST/posts/Augmentation/</link>
   <description><![CDATA[ 
 
 
@@ -382,35 +382,35 @@ font-style: inherit;">"right"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/Augmentation/index_files/figure-html/cell-4-output-1.png" width="415" height="431" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/Augmentation/index_files/figure-html/cell-4-output-1.png" width="415" height="431" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/Augmentation/index_files/figure-html/cell-4-output-2.png" width="415" height="431" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/Augmentation/index_files/figure-html/cell-4-output-2.png" width="415" height="431" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/Augmentation/index_files/figure-html/cell-4-output-3.png" width="415" height="431" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/Augmentation/index_files/figure-html/cell-4-output-3.png" width="415" height="431" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/Augmentation/index_files/figure-html/cell-4-output-4.png" width="415" height="431" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/Augmentation/index_files/figure-html/cell-4-output-4.png" width="415" height="431" class="figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/Augmentation/index_files/figure-html/cell-4-output-5.png" width="415" height="431" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/Augmentation/index_files/figure-html/cell-4-output-5.png" width="415" height="431" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -841,7 +841,7 @@ font-style: inherit;">=</span> knn_clf.predict(X_test)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/Augmentation/index_files/figure-html/cell-10-output-1.png" width="513" height="429" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/Augmentation/index_files/figure-html/cell-10-output-1.png" width="513" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -873,13 +873,13 @@ F1 Score: 0.9587125098025602</code></pre>
 </section>
 
  ]]></description>
-  <guid>https://your-website-url.example.com/posts/Augmentation/</guid>
-  <pubDate>Fri, 30 Jan 2026 18:11:55 GMT</pubDate>
+  <guid>https://AlexTabble.github.io/Classic-MNIST/posts/Augmentation/</guid>
+  <pubDate>Fri, 30 Jan 2026 18:14:36 GMT</pubDate>
 </item>
 <item>
   <title>Trying KNN</title>
   <dc:creator>Alexander Leak</dc:creator>
-  <link>https://your-website-url.example.com/posts/KNN/</link>
+  <link>https://AlexTabble.github.io/Classic-MNIST/posts/KNN/</link>
   <description><![CDATA[ 
 
 
@@ -1036,7 +1036,7 @@ F1 Score 0.9434721278288498</code></pre>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/KNN/index_files/figure-html/cell-6-output-1.png" width="513" height="429" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/KNN/index_files/figure-html/cell-6-output-1.png" width="513" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1056,7 +1056,7 @@ font-style: inherit;">".0%"</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/KNN/index_files/figure-html/cell-7-output-1.png" width="500" height="429" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/KNN/index_files/figure-html/cell-7-output-1.png" width="500" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -1174,12 +1174,12 @@ Best Score 0.9489285714285713</code></pre>
 </section>
 
  ]]></description>
-  <guid>https://your-website-url.example.com/posts/KNN/</guid>
-  <pubDate>Fri, 30 Jan 2026 18:11:55 GMT</pubDate>
+  <guid>https://AlexTabble.github.io/Classic-MNIST/posts/KNN/</guid>
+  <pubDate>Fri, 30 Jan 2026 18:14:36 GMT</pubDate>
 </item>
 <item>
   <title>MNIST Classification</title>
-  <link>https://your-website-url.example.com/posts/SGD/</link>
+  <link>https://AlexTabble.github.io/Classic-MNIST/posts/SGD/</link>
   <description><![CDATA[ 
 
 
@@ -1265,7 +1265,7 @@ font-style: inherit;">0</span>]</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/SGD/index_files/figure-html/cell-4-output-1.png" width="389" height="389" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/SGD/index_files/figure-html/cell-4-output-1.png" width="389" height="389" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -2593,7 +2593,7 @@ font-style: inherit;">"threshold"</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/SGD/index_files/figure-html/cell-16-output-1.png" width="571" height="411" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/SGD/index_files/figure-html/cell-16-output-1.png" width="571" height="411" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -2612,7 +2612,7 @@ font-style: inherit;">"Precision/Recall Curve"</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/SGD/index_files/figure-html/cell-17-output-1.png" width="571" height="411" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/SGD/index_files/figure-html/cell-17-output-1.png" width="571" height="411" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -2700,7 +2700,7 @@ font-style: inherit;">"Random Classifier's ROC curve"</span>)</span>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="https://your-website-url.example.com/posts/SGD/index_files/figure-html/cell-19-output-1.png" width="571" height="411" class="figure-img"></p>
+<p><img src="https://AlexTabble.github.io/Classic-MNIST/posts/SGD/index_files/figure-html/cell-19-output-1.png" width="571" height="411" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -2725,8 +2725,8 @@ font-style: inherit;">print</span>(roc_auc_score(y_train_5, y_scores))</span></c
 </section>
 
  ]]></description>
-  <guid>https://your-website-url.example.com/posts/SGD/</guid>
-  <pubDate>Fri, 30 Jan 2026 18:11:55 GMT</pubDate>
+  <guid>https://AlexTabble.github.io/Classic-MNIST/posts/SGD/</guid>
+  <pubDate>Fri, 30 Jan 2026 18:14:36 GMT</pubDate>
 </item>
 </channel>
 </rss>
