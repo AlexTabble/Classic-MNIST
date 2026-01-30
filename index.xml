@@ -10,7 +10,7 @@
 <atom:link href="https://your-website-url.example.com/index.xml" rel="self" type="application/rss+xml"/>
 <description>A blog built with Quarto</description>
 <generator>quarto-1.8.26</generator>
-<lastBuildDate>Fri, 30 Jan 2026 18:09:25 GMT</lastBuildDate>
+<lastBuildDate>Fri, 30 Jan 2026 18:11:55 GMT</lastBuildDate>
 <item>
   <title>Mnist Data Augmentation</title>
   <dc:creator>Alexander Leak</dc:creator>
@@ -874,7 +874,7 @@ F1 Score: 0.9587125098025602</code></pre>
 
  ]]></description>
   <guid>https://your-website-url.example.com/posts/Augmentation/</guid>
-  <pubDate>Fri, 30 Jan 2026 18:09:25 GMT</pubDate>
+  <pubDate>Fri, 30 Jan 2026 18:11:55 GMT</pubDate>
 </item>
 <item>
   <title>Trying KNN</title>
@@ -1175,7 +1175,7 @@ Best Score 0.9489285714285713</code></pre>
 
  ]]></description>
   <guid>https://your-website-url.example.com/posts/KNN/</guid>
-  <pubDate>Fri, 30 Jan 2026 18:09:25 GMT</pubDate>
+  <pubDate>Fri, 30 Jan 2026 18:11:55 GMT</pubDate>
 </item>
 <item>
   <title>MNIST Classification</title>
@@ -2726,7 +2726,7 @@ font-style: inherit;">print</span>(roc_auc_score(y_train_5, y_scores))</span></c
 
  ]]></description>
   <guid>https://your-website-url.example.com/posts/SGD/</guid>
-  <pubDate>Fri, 30 Jan 2026 18:09:25 GMT</pubDate>
+  <pubDate>Fri, 30 Jan 2026 18:11:55 GMT</pubDate>
 </item>
 </channel>
 </rss>
